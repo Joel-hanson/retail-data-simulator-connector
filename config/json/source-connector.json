@@ -1,0 +1,10 @@
+{
+    "name": "example-source-connector",
+    "config": {
+        "connector.class": "com.example.kafka.connect.source.ExampleSourceConnector",
+        "tasks.max": "1",
+        "topic": "example-source-topic",
+        "poll.interval.ms": "5000",
+        "batch.size": "100"
+    }
+}
