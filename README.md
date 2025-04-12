@@ -1,13 +1,14 @@
-# Kafka Connector Template
+# Retail Data Simulator Kafka Connector
 
-[![Build Status](https://github.com/joel-hanson/kafka-connector-template/workflows/Build/badge.svg)](https://github.com/joel-hanson/kafka-connector-template/actions)
+[![Build Status](https://github.com/your-org/retail-data-simulator-connector/workflows/Build/badge.svg)](https://github.com/your-org/retail-data-simulator-connector/actions)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
-A comprehensive template for creating Apache Kafka Connect source and sink connectors, built with Maven. This template provides a foundation for developing production-ready connectors with proper configuration, testing, and deployment capabilities.
+A Kafka Connect source connector that simulates retail data events for inventory, orders, and logistics. This connector generates realistic retail data streams for demonstration and testing purposes, particularly useful for RAG (Retrieval-Augmented Generation) and event automation demos.
 
 ## Table of Contents
 
 - [Overview](#overview)
+- [Key Features](#key-features)
 - [Project Structure](#project-structure)
 - [Prerequisites](#prerequisites)
 - [Getting Started](#getting-started)
@@ -15,178 +16,251 @@ A comprehensive template for creating Apache Kafka Connect source and sink conne
   - [Running with Docker](#running-with-docker)
   - [Manual Installation](#manual-installation)
 - [Configuration](#configuration)
-  - [Source Connector Configuration](#source-connector-configuration)
-  - [Sink Connector Configuration](#sink-connector-configuration)
+  - [Connector Configuration](#connector-configuration)
+- [Data Schemas](#data-schemas)
 - [Development](#development)
-  - [Adding New Functionality](#adding-new-functionality)
+  - [Customizing Data Generation](#customizing-data-generation)
   - [Testing](#testing)
 - [Deployment](#deployment)
+- [Monitoring](#monitoring)
 - [Contributing](#contributing)
 - [License](#license)
 
 ## Overview
 
-This template provides a foundation for creating both source and sink Kafka connectors:
+This connector generates three types of retail events:
 
-- **Source Connector**: Pulls data from an external system into Kafka topics
-- **Sink Connector**: Exports data from Kafka topics to an external system
+1. **Inventory Events**: Simulates inventory updates with SKUs, quantities, and reorder thresholds
+2. **Order Events**: Simulates customer orders with items, payment details, and loyalty points
+3. **Logistics Events**: Simulates shipment updates with carrier information, status, and cost components
 
-The template includes proper configuration classes, comprehensive tests, Docker setup for local development, and GitHub Actions workflows for CI/CD.
+The connector is designed to work with Avro schemas and can integrate with schema registries.
+
+## Key Features
+
+- Generates realistic retail data streams for demos and testing
+- Supports multiple event types (inventory, orders, logistics)
+- Configurable event generation frequency and batch size
+- Proper schema definitions for all event types
+- Offset tracking for consistent data generation
+- Easy integration with Kafka Connect ecosystem
 
 ## Project Structure
 
 ```shell
-├── src/main/java/             # Main source code
-│   └── com/example/kafka/connect/
-│       ├── sink/              # Sink connector implementation
-│       └── source/            # Source connector implementation
+├── src/main/java/
+│   └── com/retaildatasimulator/kafka/connect/
+│       ├── source/
+│       │   ├── RetailDataSimulatorConnector.java  # Main connector class
+│       │   ├── RetailDataSimulatorTask.java       # Task implementation
+│       │   └── RetailDataSimulatorConfig.java     # Configuration class
 ├── src/test/                  # Test code
 ├── config/                    # Example configurations
-└── .github/                   # GitHub templates and workflows
+│   ├── json/
+│   │   └── source-connector.json  # Example connector config
+└── docker/                    # Docker development setup
 ```
 
 ## Prerequisites
 
-- Java 11 or higher
-- Maven 3.6.3 or higher
+- Java 11+
+- Maven 3.6.3+
 - Docker and Docker Compose (for local development)
-- Apache Kafka 3.x (or preferred version)
+- Apache Kafka 3.x+ (or Confluent Platform)
+- Schema Registry (optional)
 
 ## Getting Started
 
 ### Building the Connector
 
-Clone the repository and build the project:
-
 ```bash
-git clone https://github.com/joel-hanson/kafka-connector-template.git
-cd kafka-connector-template
+git clone https://github.com/your-org/retail-data-simulator-connector.git
+cd retail-data-simulator-connector
 mvn clean package
 ```
 
-This will create a JAR file in the `target/` directory with all dependencies included.
+The build will produce a fat JAR in `target/` containing all dependencies.
 
 ### Running with Docker
 
-The easiest way to get started is using the provided Docker Compose setup:
+A complete development environment is provided:
 
 ```bash
 cd docker
 docker-compose up -d
 ```
 
-This will start:
+This starts:
 
 - Zookeeper
 - Kafka broker
-- Kafka Connect with the connector plugin pre-installed
+- Kafka Connect with the connector pre-installed
 - Schema Registry (optional)
-
-You can then configure the connectors using the Kafka Connect REST API.
 
 ### Manual Installation
 
-1. Build the connector JAR as described above
-2. Copy the JAR file to the Kafka Connect plugins directory:
+1. Build the connector JAR
+2. Copy to Kafka Connect plugins directory:
 
    ```bash
-   cp target/kafka-connector-template-*.jar $KAFKA_CONNECT_PLUGINS_DIR/
+   cp target/retail-data-simulator-connector-*.jar $KAFKA_CONNECT_PLUGINS_DIR/
    ```
 
-3. Restart Kafka Connect
+3. Restart Kafka Connect workers
 
 ## Configuration
 
-### Source Connector Configuration
+### Connector Configuration
 
-Create a file named `source-connector.properties` with the following content:
+Create `config/json/source-connector.json`:
 
-```properties
-name=example-source-connector
-connector.class=com.example.kafka.connect.source.ExampleSourceConnector
-tasks.max=1
-topics=example-topic
-# Custom connector configuration
-example.source.batch.size=100
-example.source.poll.interval.ms=1000
-# Add other configuration properties as needed
+```json
+{
+  "name": "retail-data-simulator",
+  "config": {
+    "connector.class": "com.retaildatasimulator.kafka.connect.source.RetailDataSimulatorConnector",
+    "tasks.max": "1",
+    "inventory.topic": "inventory_updates",
+    "orders.topic": "customer_orders",
+    "logistics.topic": "shipment_updates",
+    "poll.interval.ms": "1000",
+    "batch.size": "5"
+  }
+}
 ```
 
-To deploy the connector:
+Deploy the connector:
 
 ```bash
 curl -X POST -H "Content-Type: application/json" --data @config/json/source-connector.json http://localhost:8083/connectors
 ```
 
-### Sink Connector Configuration
+## Data Schemas
 
-Create a file named `sink-connector.properties` with the following content:
+The connector generates data with the following schemas:
 
-```properties
-name=example-sink-connector
-connector.class=com.example.kafka.connect.sink.ExampleSinkConnector
-tasks.max=1
-topics=example-topic
-# Custom connector configuration
-example.sink.batch.size=100
-# Add other configuration properties as needed
+**Inventory Events:**
+
+```json
+{
+  "event_id": "string",
+  "event_type": "string",
+  "location": "string",
+  "sku": "string",
+  "quantity": "int",
+  "timestamp": "string",
+  "reorder_threshold": "int",
+  "supplier": "string"
+}
 ```
 
-To deploy the connector:
+**Order Events:**
 
-```bash
-curl -X POST -H "Content-Type: application/json" --data @config/json/sink-connector.json http://localhost:8083/connectors
+```json
+{
+  "event_id": "string",
+  "event_type": "string",
+  "order_id": "string",
+  "customer_id": "string",
+  "items": [
+    {
+      "sku": "string",
+      "quantity": "int",
+      "price": "float",
+      "size": "string"
+    }
+  ],
+  "total_amount": "float",
+  "payment_method": "string",
+  "payment_details": "string",
+  "loyalty_points_used": "int",
+  "timestamp": "string"
+}
+```
+
+**Logistics Events:**
+
+```json
+{
+  "event_id": "string",
+  "event_type": "string",
+  "shipment_id": "string",
+  "carrier": "string",
+  "status": "string",
+  "estimated_delivery": "string",
+  "cost_components": [
+    {
+      "name": "string",
+      "value": "float"
+    }
+  ],
+  "route_optimization_score": "float",
+  "carbon_footprint": "float",
+  "timestamp": "string"
+}
 ```
 
 ## Development
 
-### Adding New Functionality
+### Customizing Data Generation
 
-1. Create or modify the connector configuration class to add new configuration options
-2. Implement the functionality in the connector or task classes
-3. Add appropriate tests
+To modify the data generation patterns:
+
+1. Edit the generator methods in `RetailDataSimulatorTask.java`:
+   - `generateInventoryEvent()`
+   - `generateOrderEvent()`
+   - `generateLogisticsEvent()`
+
+2. Add new fields to the schemas if needed
 
 ### Testing
 
-Run the tests with:
+Run unit tests:
 
 ```bash
 mvn test
 ```
 
-Integration tests can be run with Docker Compose:
+For integration testing with a live Kafka cluster:
 
 ```bash
-# Start the required services
-docker-compose -f docker-compose.yml up -d
-
-# Run the tests
+docker-compose -f docker-compose-test.yml up -d
 mvn verify
-
-# Stop the services
-docker-compose -f docker-compose.yml down
 ```
-
-Verify the working of connector:
-
-```bash
-docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh --bootstrap-server kafka:9092 --topic example-source-topic --from-beginning --property print.key=true --property print.offset=true
-```
-
-You will see the events from the topic.
 
 ## Deployment
 
-The connector can be deployed in several ways:
+### Production Deployment Options
 
-1. **Manual deployment**: Copy the JAR to the Kafka Connect plugins directory
-2. **Confluent Hub**: Package the connector for distribution via Confluent Hub
-3. **Docker**: Use the provided Dockerfile to create a custom Connect image with the connector
+1. **Confluent Hub**: Package as a Confluent Hub component
+2. **Docker Image**: Build a custom Connect image with the connector
+3. **Kubernetes**: Deploy as part of a Kafka Connect cluster on Kubernetes
+
+## Monitoring
+
+Monitor the connector using:
+
+1. Kafka Connect REST API:
+
+   ```bash
+   curl http://localhost:8083/connectors/retail-data-simulator/status
+   ```
+
+2. JMX metrics (if enabled)
+
+3. Kafka consumer to inspect generated events:
+
+   ```bash
+   docker exec -it kafka kafka-console-consumer \
+     --bootstrap-server localhost:9092 \
+     --topic inventory_updates \
+     --from-beginning
+   ```
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache License 2.0 - see [LICENSE](LICENSE) for details.

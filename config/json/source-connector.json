@@ -1,10 +1,12 @@
 {
-    "name": "example-source-connector",
+    "name": "reltail-data-simulator",
     "config": {
-        "connector.class": "com.example.kafka.connect.source.ExampleSourceConnector",
+        "connector.class": "com.retaildatasimulator.kafka.connect.source.RetailDataSimulatorConnector",
         "tasks.max": "1",
-        "topic": "example-source-topic",
-        "poll.interval.ms": "5000",
-        "batch.size": "100"
+        "inventory.topic": "inventory_topic",
+        "orders.topic": "orders_topic",
+        "logistics.topic": "logistics_topic",
+        "poll.interval.ms": "1000",
+        "batch.size": "1"
     }
 }
