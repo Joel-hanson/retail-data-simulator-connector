@@ -21,7 +21,6 @@ A Kafka Connect source connector that simulates retail data events for inventory
 - [Development](#development)
   - [Customizing Data Generation](#customizing-data-generation)
   - [Testing](#testing)
-- [Deployment](#deployment)
 - [Monitoring](#monitoring)
 - [Contributing](#contributing)
 - [License](#license)
@@ -228,14 +227,6 @@ docker-compose -f docker-compose-test.yml up -d
 mvn verify
 ```
 
-## Deployment
-
-### Production Deployment Options
-
-1. **Confluent Hub**: Package as a Confluent Hub component
-2. **Docker Image**: Build a custom Connect image with the connector
-3. **Kubernetes**: Deploy as part of a Kafka Connect cluster on Kubernetes
-
 ## Monitoring
 
 Monitor the connector using:
@@ -251,9 +242,9 @@ Monitor the connector using:
 3. Kafka consumer to inspect generated events:
 
    ```bash
-   docker exec -it kafka kafka-console-consumer \
+   docker exec -it kafka /opt/kafka/bin/kafka-console-consumer.sh \
      --bootstrap-server localhost:9092 \
-     --topic inventory_updates \
+     --topic inventory_topic \
      --from-beginning
    ```
 

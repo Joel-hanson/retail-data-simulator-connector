@@ -1,5 +1,5 @@
 {
-    "name": "reltail-data-simulator",
+    "name": "retail-data-simulator",
     "config": {
         "connector.class": "com.retaildatasimulator.kafka.connect.source.RetailDataSimulatorConnector",
         "tasks.max": "1",
