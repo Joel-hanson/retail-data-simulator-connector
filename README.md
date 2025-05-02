@@ -1,6 +1,6 @@
 # Retail Data Simulator Kafka Connector
 
-[![Build Status](https://github.com/your-org/retail-data-simulator-connector/workflows/Build/badge.svg)](https://github.com/your-org/retail-data-simulator-connector/actions)
+[![Build Status](https://github.com/Joel-hanson/retail-data-simulator-connector/actions/workflows/build.yml/badge.svg)](https://github.com/Joel-hanson/retail-data-simulator-connector/actions/workflows/build.yml)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
 
 A Kafka Connect source connector that simulates retail data events for inventory, orders, and logistics. This connector generates realistic retail data streams for demonstration and testing purposes, particularly useful for RAG (Retrieval-Augmented Generation) and event automation demos.
