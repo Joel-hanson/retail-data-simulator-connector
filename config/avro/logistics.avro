@@ -1,0 +1,51 @@
+{
+  "type": "record",
+  "name": "LogisticsEvent",
+  "namespace": "com.yourcompany.events.logistics",
+  "fields": [
+    { "name": "event_id",          "type": "string" },
+    { "name": "event_type",        "type": "string" },
+    { "name": "shipment_id",       "type": "string" },
+    { "name": "order_id",          "type": "string" },
+    { "name": "carrier",           "type": "string" },
+    { "name": "status",            "type": "string" },
+    { "name": "shipping_method",   "type": "string" },
+    { "name": "origin",            "type": "string" },
+    { "name": "destination",       "type": "string" },
+    {
+      "name": "estimated_delivery",
+      "type": [ "null",
+        { "type": "int", "logicalType": "date" }
+      ],
+      "default": null
+    },
+    {
+      "name": "actual_delivery",
+      "type": [ "null",
+        { "type": "int", "logicalType": "date" }
+      ],
+      "default": null
+    },
+    {
+      "name": "cost_components",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "CostComponent",
+          "fields": [
+            { "name": "name",  "type": "string" },
+            { "name": "value", "type": "double" }
+          ]
+        }
+      }
+    },
+    { "name": "package_weight",      "type": "double" },
+    { "name": "package_dimensions",  "type": "string" },
+    {
+      "name": "timestamp",
+      "type": { "type": "long", "logicalType": "timestamp-millis" }
+    },
+    { "name": "total_shipping_cost", "type": "double" }
+  ]
+}

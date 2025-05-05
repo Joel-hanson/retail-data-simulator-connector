@@ -1,0 +1,50 @@
+{
+  "type": "record",
+  "name": "OrderEvent",
+  "namespace": "com.yourcompany.events.orders",
+  "fields": [
+    { "name": "event_id",          "type": "string" },
+    { "name": "event_type",        "type": "string" },
+    { "name": "order_id",          "type": "string" },
+    { "name": "customer_id",       "type": "string" },
+    {
+      "name": "items",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "OrderItem",
+          "fields": [
+            { "name": "sku",           "type": "string" },
+            { "name": "model_name",    "type": "string" },
+            { "name": "color",         "type": "string" },
+            { "name": "quantity",      "type": "int" },
+            { "name": "price",         "type": "double" },
+            { "name": "size",          "type": "string" },
+            { "name": "is_discounted", "type": "boolean" },
+            {
+              "name": "discount_pct",
+              "type": [ "null", "double" ],
+              "default": null
+            }
+          ]
+        }
+      }
+    },
+    { "name": "subtotal",         "type": "double" },
+    { "name": "tax_amount",       "type": "double" },
+    { "name": "shipping_amount",  "type": "double" },
+    { "name": "total_amount",     "type": "double" },
+    { "name": "payment_method",   "type": "string" },
+    { "name": "payment_details",  "type": "string" },
+    { "name": "loyalty_points_used",   "type": "int" },
+    { "name": "loyalty_points_earned", "type": "int" },
+    { "name": "shipping_address", "type": "string" },
+    { "name": "billing_address",  "type": "string" },
+    { "name": "is_gift",          "type": "boolean" },
+    {
+      "name": "timestamp",
+      "type": { "type": "long", "logicalType": "timestamp-millis" }
+    }
+  ]
+}

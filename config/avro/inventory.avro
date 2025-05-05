@@ -1,0 +1,30 @@
+{
+  "type": "record",
+  "name": "InventoryEvent",
+  "namespace": "com.yourcompany.events.inventory",
+  "fields": [
+    { "name": "event_id",             "type": "string" },
+    { "name": "event_type",           "type": "string" },
+    { "name": "location",             "type": "string" },
+    { "name": "location_type",        "type": "string" },
+    { "name": "sku",                  "type": "string" },
+    { "name": "model_name",           "type": "string" },
+    { "name": "color",                "type": "string" },
+    { "name": "size",                 "type": "string" },
+    { "name": "quantity",             "type": "int" },
+    {
+      "name": "timestamp",
+      "type": { "type": "long", "logicalType": "timestamp-millis" }
+    },
+    { "name": "reorder_threshold",    "type": "int" },
+    { "name": "supplier",             "type": "string" },
+    {
+      "name": "last_restock_date",
+      "type": [ "null",
+        { "type": "int", "logicalType": "date" }
+      ],
+      "default": null
+    },
+    { "name": "days_in_stock",        "type": "int" }
+  ]
+}

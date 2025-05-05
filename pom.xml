@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.retaildatasimulator</groupId>
-    <artifactId>kafka-connector-template</artifactId>
+    <artifactId>kafka-source-connector</artifactId>
     <version>0.0.1</version>
     <packaging>jar</packaging>
 
-    <name>Kafka Connector Template</name>
-    <description>Template project for Kafka Connect Source and Sink connectors</description>
-    <url>https://github.com/joel-hanson/kafka-connector-template</url>
+    <name>Retail Data Simulator Connector</name>
+    <description>A project for demoing Kafka Connect Source using realistic retail simulated data</description>
+    <url>https://github.com/joel-hanson/retail-data-simulator-connector</url>
 
     <licenses>
         <license>
